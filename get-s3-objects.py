@@ -38,7 +38,7 @@ try:
             paginator = s3.get_paginator('list_objects_v2')
             for result in paginator.paginate(Bucket=bucket):
                 for obj in result.get('Contents', []):
-                    f.write(obj['Key'] + '\n')
+                    f.write(f"s3://{bucket}/{obj['Key']}\n")
             logger.info(f"Finished listing objects in {bucket}")
 except IOError as e:
     logger.error("An error occurred while opening or writing to the file: " + str(e))
