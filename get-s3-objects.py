@@ -1,5 +1,6 @@
 import boto3
 import logging
+from tqdm import tqdm
 
 # Create a logger
 logger = logging.getLogger()
@@ -31,16 +32,16 @@ try:
     # Open a file to write the objects
     with open("get-s3-objects.txt", 'w') as f:
         # Iterate through each bucket and list all objects
-        for i, bucket in enumerate(buckets):
-            logger.info(f"Starting to list objects in {bucket} ({i+1}/{len(buckets)})")
+        for bucket in tqdm(buckets):
+            logger.info(f"Starting to list objects in {bucket}")
             # Use the boto3 paginator to handle pagination for the list_objects_v2 method
             paginator = s3.get_paginator('list_objects_v2')
             for result in paginator.paginate(Bucket=bucket):
                 for obj in result.get('Contents', []):
                     f.write(obj['Key'] + '\n')
-            logger.info(f"Finished listing objects in {bucket} ({i+1}/{len(buckets)})")
+            logger.info(f"Finished listing objects in {bucket}")
 except IOError as e:
     logger.error("An error occurred while opening or writing to the file: " + str(e))
         
 finally:
-    file_handler.close() 
+    file_handler.close()
